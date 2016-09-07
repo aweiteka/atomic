@@ -88,7 +88,7 @@ class Sign(Atomic):
             # TODO
             # perhaps revisit directory permissions
             # when complete use-cases are known
-            os.makedirs(sig_path, '0777')
+            os.makedirs(sig_path, 0664)
 
     @staticmethod
     def get_sig_name2(sig_path):
