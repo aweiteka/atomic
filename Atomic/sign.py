@@ -85,9 +85,6 @@ class Sign(Atomic):
     @staticmethod
     def make_sig_dirs(sig_path):
         if not os.path.exists(sig_path):
-            # TODO
-            # perhaps revisit directory permissions
-            # when complete use-cases are known
             os.makedirs(sig_path, 0664)
 
     @staticmethod
