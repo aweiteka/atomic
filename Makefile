@@ -10,6 +10,12 @@ GO_MD2MAN ?= /usr/bin/go-md2man
 GO ?= /usr/bin/go
 PYTHONSITELIB=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(0))")
 VERSION=$(shell $(PYTHON) setup.py --version)
+SKOPEO_SRC_REPO ?= https://github.com/projectatomic/skopeo.git
+SKOPEO_SRC_BRANCH ?= master
+SKOPEO_PATH ?= /tmp/skopeo
+
+export PATH := $(DESTDIR)/skopeo:${PATH}
+
 export GOPATH = $(shell pwd)/godeps
 BOX="fedora_atomic"
 
@@ -95,3 +101,9 @@ install-openscap:
 .PHONY: vagrant-check
 vagrant-check:
 	BOX=$(BOX) sh ./vagrant.sh 
+
+.PHONY: build-skopeo
+build-skopeo:
+	rm -rf $(DESTDIR)/skopeo
+	git clone --depth 1 $(SKOPEO_SRC_REPO) -b $(SKOPEO_SRC_BRANCH) $(DESTDIR)/skopeo
+	make binary --directory $(DESTDIR)/skopeo -d

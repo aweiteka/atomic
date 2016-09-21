@@ -32,7 +32,7 @@ ATOMIC_VAR_LIB = os.environ.get('ATOMIC_VAR_LIB', '/var/lib/atomic')
 GOMTREE_PATH = "/usr/bin/gomtree"
 BWRAP_OCI_PATH = "/usr/bin/bwrap-oci"
 RUNC_PATH = "/bin/runc"
-SKOPEO_PATH = "/usr/bin/skopeo"
+SKOPEO_PATH = "skopeo"
 
 def gomtree_available():
     return os.path.exists(GOMTREE_PATH)
