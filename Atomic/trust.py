@@ -167,6 +167,11 @@ class Trust(Atomic):
                 policy["default"][0]["type"] = default_type_map[self.args.default_policy]
             else:
                 policy["default"] = [ { "type": default_type_map[self.args.default_policy] }]
+            if default_type_map[self.args.default_policy] == "reject":
+                if not "transports" in policy:
+                    policy["transports"] = {}
+                # we don't want to reject push from docker-daemon
+                policy["transports"]["docker-daemon"] = { "": [{"type":"insecureAcceptAnything"}] }
 
             policy_file.seek(0)
             json.dump(policy, policy_file, indent=4)
