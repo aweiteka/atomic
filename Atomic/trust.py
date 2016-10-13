@@ -7,7 +7,7 @@ import yaml
 import requests
 import collections
 
-TRANSPORT_TYPES = ["docker", "atomic", "web"]
+TRANSPORT_TYPES = ["docker", "atomic", "dir"]
 
 def cli(subparser):
     # atomic trust
