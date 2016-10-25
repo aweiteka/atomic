@@ -408,14 +408,14 @@ class Trust(Atomic):
                 # extend when we support parsing inline 'keyData' base64 encoded key
                 return ""
             else:
-                cmd = ["gpg2", "--with-colons", key]
+                cmd = ["gpg", "--with-colons", key]
             try:
                 results = util.check_output(cmd)
             except util.FileNotFound:
                 results = ""
             lines = results.split(b'\n')
             for line in lines:
-                if "uid" in str(line):
+                if "pub" in str(line):
                     uid = str(line).split(':')[9]
                     # bracketed email
                     parsed_uid = uid.partition('<')[-1].rpartition('>')[0]
