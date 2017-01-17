@@ -59,7 +59,12 @@ TEMPLATE_OVERRIDABLE_VARIABLES = ["RUN_DIRECTORY", "STATE_DIRECTORY", "UUID"]
 
 class SystemContainers(object):
 
-    def __init__(self):
+    def __init__(self, policy_filename=None):
+        """
+        :param policy_filename: override policy filename
+        """
+        super(SystemContainers, self).__init__()
+        self.policy_filename=policy_filename
         self.atomic_config = util.get_atomic_config()
         self.backend = None
         self.user = util.is_user_mode()
@@ -1000,10 +1005,6 @@ class SystemContainers(object):
         args, img = self._convert_to_skopeo(image)
         return util.skopeo_inspect(img, args)
 
-    def _skopeo_get_layers(self, image, layers):
-        _, img = self._convert_to_skopeo(image)
-        return util.skopeo_layers(img, [], layers)
-
     def _image_manifest(self, repo, rev):
         return SystemContainers._get_commit_metadata(repo, rev, "docker.manifest")
 
@@ -1155,7 +1156,6 @@ class SystemContainers(object):
         current_rev = repo.resolve_rev(imagebranch, True)
         if not upgrade and current_rev[1]:
             return False
-
         manifest = self._skopeo_get_manifest(img)
         layers = SystemContainers.get_layers_from_manifest(manifest)
         missing_layers = []
@@ -1169,7 +1169,11 @@ class SystemContainers(object):
         try:
             layers_to_import = {}
             if len(missing_layers):
-                layers_dir = self._skopeo_get_layers(img, missing_layers)
+                layers_dir = tempfile.mkdtemp()
+                #fq_name = util.get_fq_image_name(img)
+                util.skopeo_copy("docker://{}".format(img), "dir:{}".format(layers_dir),
+                    debug=self.args.debug, sign_by=None, insecure=False,
+                    policy_filename=self.policy_filename)
                 for root, _, files in os.walk(layers_dir):
                     for f in files:
                         if f.endswith(".tar"):
